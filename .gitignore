@@ -139,3 +139,6 @@ replay_pid*
 
 # Properties #
 application.properties
+
+# CorsConfig #
+CorsConfig.java
