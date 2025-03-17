@@ -8,7 +8,7 @@ import java.util.Base64;
 public final class CategoryConverter {
 
     private CategoryConverter() {
-        throw new IllegalStateException("Concert converter");
+        throw new IllegalStateException("Category converter");
     }
 
     public static Category convertToObject(CategoryEntity entity)
