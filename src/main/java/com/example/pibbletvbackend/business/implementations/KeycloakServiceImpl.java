@@ -23,6 +23,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class KeycloakServiceImpl implements KeycloakService {
@@ -48,7 +49,6 @@ public class KeycloakServiceImpl implements KeycloakService {
         HttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost(registrationUrl);
 
-        // Read and encode images as Base64
         String base64BackgroundPic = Base64.getEncoder().encodeToString(Files.readAllBytes(Paths.get(backgroundPicPath)));
         String base64ProfilePic = Base64.getEncoder().encodeToString(Files.readAllBytes(Paths.get(profilePicPath)));
 
@@ -67,12 +67,11 @@ public class KeycloakServiceImpl implements KeycloakService {
         if (statusCode == 201) {
             System.out.println("User registered successfully");
 
+            String userId = UUID.randomUUID().toString();
 
-            String userId = fetchUserIdFromKeycloak(email);
             if (userId == null) {
                 throw new Exception("Failed to retrieve user ID from Keycloak.");
             }
-
 
             UserEntity user = UserEntity.builder()
                     .id(userId)
