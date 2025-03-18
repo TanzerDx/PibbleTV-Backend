@@ -3,6 +3,9 @@ package com.example.pibbletvbackend.business.implementations;
 import com.example.pibbletvbackend.business.interfaces.KeycloakService;
 import com.example.pibbletvbackend.persistance.entities.UserEntity;
 import com.example.pibbletvbackend.persistance.jpa.UserRepository;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.HttpClient;
@@ -43,7 +46,7 @@ public class KeycloakServiceImpl implements KeycloakService {
     @Autowired
     private UserRepository userRepository;
 
-    public void registerUser(String username, String email, String password, String backgroundPicPath, String profilePicPath) throws Exception {
+    public String registerUser(String username, String email, String password, String backgroundPicPath, String profilePicPath) throws Exception {
         String registrationUrl = authServerUrl + "/realms/" + realm + "/protocol/openid-connect/registrations";
 
         HttpClient client = HttpClients.createDefault();
@@ -64,28 +67,36 @@ public class KeycloakServiceImpl implements KeycloakService {
         HttpResponse response = client.execute(post);
         int statusCode = response.getStatusLine().getStatusCode();
 
+        String accessToken;
+
         if (statusCode == 201) {
             System.out.println("User registered successfully");
 
-            String userId = UUID.randomUUID().toString();
+            accessToken = authenticateUser(email, password);
 
+            String userId = extractUserIdFromToken(accessToken);
             if (userId == null) {
-                throw new Exception("Failed to retrieve user ID from Keycloak.");
+                throw new Exception("Failed to retrieve user ID.");
             }
 
             UserEntity user = UserEntity.builder()
                     .id(userId)
                     .username(username)
+                    .role("User")
                     .bgImage(Base64.getDecoder().decode(base64BackgroundPic))
                     .profileImage(Base64.getDecoder().decode(base64ProfilePic))
+                    .isBanned(Boolean.FALSE)
                     .build();
 
             userRepository.save(user);
             System.out.println("User saved to database with ID: " + userId);
+
         } else {
             String responseBody = EntityUtils.toString(response.getEntity());
             throw new Exception("Failed to register user: " + responseBody);
         }
+
+        return accessToken;
     }
 
     public String authenticateUser(String email, String password) throws Exception {
@@ -169,5 +180,22 @@ public class KeycloakServiceImpl implements KeycloakService {
         }
 
         return result.toString();
+    }
+
+    private String extractUserIdFromToken(String accessToken) {
+        String[] tokenParts = accessToken.split("\\.");
+        if (tokenParts.length < 2) {
+            throw new RuntimeException("Invalid JWT token.");
+        }
+
+        String payloadJson = new String(Base64.getDecoder().decode(tokenParts[1]));
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            JsonNode payload = objectMapper.readTree(payloadJson);
+            return payload.get("sub").asText();
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to parse JWT token.", e);
+        }
     }
 }

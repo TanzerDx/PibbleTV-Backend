@@ -13,11 +13,11 @@ public class AuthenticationController {
     private KeycloakService keycloakService;
 
     @PostMapping("/register")
-    public void register(@RequestParam String username, @RequestParam String email, @RequestParam String password, @RequestParam String backgroundPic, @RequestParam String profilePic) {
+    public String register(@RequestParam String username, @RequestParam String email, @RequestParam String password, @RequestParam String backgroundPic, @RequestParam String profilePic) {
         try {
-            keycloakService.registerUser(username, email, password, backgroundPic, profilePic);
+            return keycloakService.registerUser(username, email, password, backgroundPic, profilePic);
         } catch (Exception e) {
-            System.out.println("Authentication failed: " + e.getMessage());
+            return "Registration failed: " + e.getMessage();
         }
     }
 
