@@ -142,6 +142,3 @@ application.properties
 
 # CorsConfig #
 CorsConfig.java
-
-# DockerCompose #
-docker-compose.yaml
