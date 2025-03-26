@@ -8,13 +8,13 @@ RUN dnf install -y java-17-openjdk
 WORKDIR /app
 
 # Copy the compiled JAR file into the container
-COPY build/libs/service_registry-0.0.1-SNAPSHOT.jar service_registry.jar
+COPY build/libs/keycloak-0.0.1-SNAPSHOT.jar keycloak.jar
 
 # Expose the application's port
-EXPOSE 8761
+EXPOSE 8079
 
 # Run the application
-ENTRYPOINT ["java", "-jar", "service_registry.jar"]
+ENTRYPOINT ["java", "-jar", "keycloak.jar"]
 
-#docker build -t service-registry -f Dockerfile .
-#docker run -d --name service-registry -p 8761:8761 service-registry
+#docker build -t authentication-service -f Dockerfile .
+#docker run -d --name authentication-service -p 8079:8079 authentication-service

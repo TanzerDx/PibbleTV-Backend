@@ -55,10 +55,9 @@ public class KeycloakServiceImpl implements KeycloakService {
 
         List<NameValuePair> params = new ArrayList<>();
         params.add(new BasicNameValuePair("client_id", clientId));
-        params.add(new BasicNameValuePair("client_secret", clientSecret));
+        params.add(new BasicNameValuePair("username", username));
         params.add(new BasicNameValuePair("email", email));
         params.add(new BasicNameValuePair("password", password));
-        params.add(new BasicNameValuePair("grant_type", "password"));
 
         post.setEntity(new UrlEncodedFormEntity(params));
 
