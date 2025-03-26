@@ -38,8 +38,7 @@ public class AuthenticationController {
             return "Token validation failed: " + e.getMessage();
         }
     }
-
-
+    
     @PostMapping("/refresh")
     public String refreshToken(@RequestParam String refreshToken) {
         try {
