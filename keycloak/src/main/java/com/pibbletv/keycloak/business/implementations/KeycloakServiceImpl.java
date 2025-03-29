@@ -45,7 +45,7 @@ public class KeycloakServiceImpl implements KeycloakService {
 //    private UserRepository userRepository;
 
     public String registerUser(String username, String email, String password, String backgroundPicPath, String profilePicPath) throws Exception {
-        String registrationUrl = authServerUrl + "/realms/" + realm + "/protocol/openid-connect/registrations";
+        String registrationUrl = authServerUrl + "/realms/" + realm + "/protocol/openid-connect/token";
 
         HttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost(registrationUrl);

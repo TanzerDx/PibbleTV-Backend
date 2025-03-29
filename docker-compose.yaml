@@ -192,3 +192,5 @@ networks:
 
 volumes:
   mysql_data:
+
+#docker-compose --env-file variables.env up --build
