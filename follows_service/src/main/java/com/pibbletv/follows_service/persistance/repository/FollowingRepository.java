@@ -1,4 +1,4 @@
-package com.pibbletv.follows_service.persistance.jpa;
+package com.pibbletv.follows_service.persistance.repository;
 
 import com.pibbletv.follows_service.persistance.entities.FollowingEntity;
 import org.springframework.data.repository.reactive.ReactiveCrudRepository;

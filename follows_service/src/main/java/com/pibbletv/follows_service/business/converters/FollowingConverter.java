@@ -6,7 +6,7 @@ import com.pibbletv.follows_service.persistance.entities.FollowingEntity;
 public final class FollowingConverter {
 
     private FollowingConverter() {
-        throw new IllegalStateException("Following converter");
+        throw new IllegalStateException("Utility class");
     }
 
     public static Following convertToObject(FollowingEntity entity) {
@@ -14,8 +14,8 @@ public final class FollowingConverter {
 
         return Following.builder()
                 .id(entity.getId())
-//                .follower(UserConverter.convertToObject(entity.getFollower()))
-//                .followed(UserConverter.convertToObject(entity.getFollowed()))
+                .followerId(entity.getFollowerId())
+                .followedId(entity.getFollowedId())
                 .build();
     }
 
@@ -24,8 +24,8 @@ public final class FollowingConverter {
 
         return FollowingEntity.builder()
                 .id(following.getId())
-//                .follower(UserConverter.convertToEntity(following.getFollower()))
-//                .followed(UserConverter.convertToEntity(following.getFollowed()))
+                .followerId(following.getFollowerId())
+                .followedId(following.getFollowedId())
                 .build();
     }
 }
