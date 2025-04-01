@@ -54,6 +54,12 @@ services:
       - "8078:8078"
     environment:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_URL}
+      KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8080
+      KEYCLOAK_REALM: ${KEYCLOAK_REALM}
+      KEYCLOAK_RESOURCE: ${KEYCLOAK_CLIENT_ID}
+      KEYCLOAK_CREDENTIALS_SECRET: ${KEYCLOAK_CLIENT_SECRET}
+      KEYCLOAK_SSL_REQUIRED: external
+      KEYCLOAK_PUBLIC_CLIENT: "false"
       SPRING_CLOUD_GATEWAY_DISCOVERY_LOCATOR_ENABLED: "true"
       SPRING_CLOUD_GATEWAY_DISCOVERY_LOCATOR_LOWERCASE_SERVICE_ID: "true"
     depends_on:
@@ -69,7 +75,7 @@ services:
     ports:
       - "8081:8081"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_db:3306/user_service
+      SPRING_DATASOURCE_URL: r2dbc:mysql://mysql_db:3306/user_service
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_URL}
       EUREKA_INSTANCE_PREFER-IP-ADDRESS: "false"
       EUREKA_INSTANCE_HOSTNAME: user-service
@@ -99,7 +105,7 @@ services:
     ports:
       - "8082:8082"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_db:3306/category_service
+      SPRING_DATASOURCE_URL: r2dbc:mysql://mysql_db:3306/category_service
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_URL}
       EUREKA_INSTANCE_PREFER_IP_ADDRESS: "true"
       EUREKA_INSTANCE_HOSTNAME: category-service
@@ -122,40 +128,6 @@ services:
       - backend
 
 
-  authentication-service:
-    env_file:
-      - variables.env
-    image: authentication-service
-    container_name: authentication-service
-    ports:
-      - "8079:8079"
-    environment:
-      EUREKA_INSTANCE_HOSTNAME: authentication-service
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_URL}
-      KEYCLOAK_AUTH_SERVER_URL: http://keycloak:8080
-      KEYCLOAK_REALM: ${KEYCLOAK_REALM}
-      KEYCLOAK_RESOURCE: ${KEYCLOAK_CLIENT_ID}
-      KEYCLOAK_CREDENTIALS_SECRET: ${KEYCLOAK_CLIENT_SECRET}
-      KEYCLOAK_SSL_REQUIRED: external
-      KEYCLOAK_PUBLIC_CLIENT: "false"
-      SPRING_DATASOURCE_USERNAME: ${DB_USER}
-      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD}
-    depends_on:
-      mysql:
-        condition: service_healthy
-      service-registry:
-        condition: service_healthy
-      api-gateway:
-        condition: service_started
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8079/actuator/health" ]
-      interval: 10s
-      timeout: 5s
-      retries: 6
-      start_period: 10s
-    networks:
-      - backend
-
   follows-service:
     env_file:
       - variables.env
@@ -164,7 +136,7 @@ services:
     ports:
       - "8083:8083"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql_db:3306/follows_service
+      SPRING_DATASOURCE_URL: r2dbc:mysql://mysql_db:3306/follows_service
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: ${EUREKA_URL}
       EUREKA_INSTANCE_PREFER-IP-ADDRESS: "false"
       EUREKA_INSTANCE_HOSTNAME: follows-service
@@ -192,5 +164,6 @@ networks:
 
 volumes:
   mysql_data:
+
 
 #docker-compose --env-file variables.env up --build
