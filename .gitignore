@@ -142,3 +142,6 @@ application.properties
 
 # CorsConfig #
 CorsConfig.java
+
+# Queries for easy access #
+queries.txt
